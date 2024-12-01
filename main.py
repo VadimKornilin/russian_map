@@ -2,12 +2,28 @@ import folium
 import json
 from folium import GeoJson
 
+# Записываем регионы присутствия
+attended_regions = ['Пермский край', 
+                    'Оренбургская область', 
+                    'Республика Татарстан',
+                    'Московская область',
+                    'Краснодарский край',
+                    'Москва',
+                    'Свердловская область',
+                    'Удмуртская Республика',
+                    'Санкт-Петербург',
+                    'Тульская область',
+                    ]
+
 # Загружаем geojson с данными о регионах России
 with open('russia_regions.geojson', 'r', encoding='utf-8') as f:
     regions_geojson = json.load(f)
 
 # Создаем карту, центрированную на России
-m = folium.Map(location=[55.7558, 37.6176], zoom_start=4)
+m = folium.Map(location=[55.7558, 37.6176], 
+               zoom_start=4,
+               attributionControl=0,
+               )
 
 # Функция для установки стиля для каждого региона
 def style_function(feature):
@@ -15,7 +31,7 @@ def style_function(feature):
     region_name = feature['properties']['region']
     
     # Если это Пермский край, применяем особый стиль
-    if region_name == "Пермский край":
+    if region_name in attended_regions:
         return {
             'fillColor': '#FF6347',  # Красный цвет
             'color': 'black',
@@ -34,7 +50,7 @@ def style_function(feature):
 # Добавляем регионы России на карту с кастомным стилем
 folium.GeoJson(
     regions_geojson,
-    name="region",
+    name="Регион",
     style_function=style_function,  # Используем функцию для стилизации
     popup=folium.GeoJsonPopup(fields=["region"]),  # Для отображения имени региона при клике
     tooltip=folium.GeoJsonTooltip(fields=["region"], sticky=True)  # Для отображения имени региона при наведении
@@ -44,4 +60,4 @@ folium.GeoJson(
 folium.LayerControl().add_to(m)
 
 # Сохраняем карту в HTML файл
-m.save("russia_map_with_perm_colored.html")
+m.save("russia_map.html")
